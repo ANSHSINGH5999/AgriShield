@@ -31,6 +31,8 @@ def table(df: pd.DataFrame) -> str:
 
 def main():
     clf, rel, ds = j("classifier_test_metrics.json"), j("reliability_test_metrics.json"), j("dataset_report.json")
+    ext = j("external_plantdoc_metrics.json")
+    es, ex = ext["strict_exact_mappings"], ext["extended_with_ambiguous"]
     hist = j("training_history.json")
     rob = pd.read_csv(M / "robustness_by_corruption.csv")
     cmp_ = pd.read_csv(M / "reliability_baseline_comparison.csv")
@@ -132,9 +134,8 @@ A Random Forest estimates the risk that each prediction is wrong.</p>
 <div class="card"><div class="l">Precision of warnings</div><div class="v">{pc(rb['precision'])}</div><div class="n">baseline {pc(cb['precision'])}</div></div>
 <div class="card"><div class="l">False alarms</div><div class="v">{pc(rb['false_alarm_rate'])}</div><div class="n">baseline {pc(cb['false_alarm_rate'])}</div></div>
 </div>
-<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. In an external
-evaluation on real field photos (different backgrounds, several leaves, lighting) accuracy dropped substantially. High accuracy on the
-benchmark does not mean the model works in the field. Details are in the project's technical report.</div>
+<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. On field-style photos
+accuracy is much lower. See <a href="#external">External PlantDoc evaluation</a> below.</div>
 </section>
 
 <section>
@@ -159,6 +160,20 @@ Configuration A uses only the uploaded image. Configuration B adds stability und
 from degraded images. On real field photos its ability to separate right from wrong predictions was much weaker.</div>
 </section>
 
+<section id="external">
+<h2>External PlantDoc evaluation (domain shift)</h2>
+<p class="sub">PlantDoc contains field-style photos (cluttered backgrounds, several leaves, varied lighting). The model was never trained on
+PlantDoc, and only classes that match PlantVillage labels were used. This tests how well performance on controlled images transfers.</p>
+<div class="grid">
+<div class="card"><div class="l">Accuracy</div><div class="v">{pc(es['accuracy'])}</div><div class="n">{es['images']:,} images, exact label matches</div></div>
+<div class="card"><div class="l">Top-3 accuracy</div><div class="v">{pc(es['top3_accuracy'])}</div><div class="n">correct class among the top 3</div></div>
+<div class="card"><div class="l">Macro F1-score</div><div class="v">{es['macro_f1_over_present_classes']:.3f}</div><div class="n">{es['classes']} classes</div></div>
+<div class="card"><div class="l">With ambiguous matches</div><div class="v">{pc(ex['accuracy'])}</div><div class="n">{ex['images']:,} images</div></div>
+</div>
+<div class="note w"><b>Domain shift.</b> The same classifier reached {pc(clf['accuracy'])} on the PlantVillage test set but {pc(es['accuracy'])}
+on PlantDoc. Accuracy on controlled images does not transfer to field-style images.</div>
+</section>
+
 <section>
 <h2>Training and test details</h2>
 <div class="two"><img class="fig" src="figures/training_curves.png" alt="Training and validation curves">
@@ -179,10 +194,16 @@ near-duplicates and photos of the same leaf stay together): {', '.join(f"{k} {v:
 
 <section id="run">
 <h2>Run the app</h2>
-<p class="sub">The app runs on your own computer and loads the trained models, so no training is needed. Upload <b>one</b> leaf
-photo and everything runs automatically: the disease prediction with its confidence (EfficientNet-B0), the reliability check
-(6 slightly changed copies plus the Random Forest's estimated error risk), and a robustness check under brightness, blur, noise, JPEG
-and low-resolution conditions.</p>
+<p class="sub">The app runs on your own computer and loads the trained models, so no training is needed. It has 3 pages: Disease
+Detection, Model Performance and About. Upload <b>one</b> leaf photo and everything runs automatically:</p>
+<ol>
+<li><b>Disease prediction:</b> the predicted disease and its confidence (EfficientNet-B0).</li>
+<li><b>Reliability assessment:</b> "Reliable" or "Potentially Unreliable", with the Random Forest's estimated error risk. It is an estimate, not a guarantee.</li>
+<li><b>Automatic robustness test:</b> the image is changed in 5 ways (brightness change, blur, Gaussian noise, JPEG compression,
+low resolution) using the project's mild perturbation settings, and each version is classified again. The page shows
+"Prediction agreement: X/5 degraded conditions".</li>
+<li><b>Final assessment:</b> "Prediction appears reliable", or "Prediction may be unreliable under changed image conditions".</li>
+</ol>
 <pre>git clone {REPO}.git
 cd AgriShield
 # Windows: double-click setup_windows.bat once, then run_app.bat
