@@ -44,7 +44,7 @@ a{color:var(--leaf)}a:focus-visible,.btn:focus-visible{outline:3px solid var(--a
 <h1>AgriShield</h1>
 <p>Reliability-aware plant disease detection under image quality degradation. EfficientNet-B0 recognises 38 leaf conditions.
 A Random Forest estimates the risk that each prediction is wrong.</p>
-<div class="links"><a class="btn p" href="https://github.com/ANSHSINGH5999/AgriShield">Code, models &amp; app on GitHub</a><a class="btn s" href="#run">Run the live app</a></div>
+<div class="links"><a class="btn p" href="https://github.com/ANSHSINGH5999/AgriShield">Code, models &amp; app on GitHub</a><a class="btn s" href="#run">How to run the app</a></div>
 </div></header>
 <div class="wrap">
 
@@ -65,13 +65,9 @@ A Random Forest estimates the risk that each prediction is wrong.</p>
 <div class="card"><div class="l">Precision of warnings</div><div class="v">66.7%</div><div class="n">baseline 57.7%</div></div>
 <div class="card"><div class="l">False alarms</div><div class="v">10.6%</div><div class="n">baseline 15.3%</div></div>
 </div>
-<span class="tag">EXTERNAL · PlantDoc field photos (never trained on)</span>
-<div class="grid">
-<div class="card"><div class="l">External accuracy</div><div class="v">18.0%</div><div class="n">2,234 images, exact label matches</div></div>
-<div class="card"><div class="l">External top-3 accuracy</div><div class="v">38.4%</div><div class="n">with ambiguous matches: 19.5% top-1</div></div>
-</div>
-<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. On real field photos (PlantDoc)
-the same model reached 18.0%. High accuracy on the benchmark does not mean the model works in the field.</div>
+<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. In an external
+evaluation on real field photos (different backgrounds, several leaves, lighting) accuracy dropped substantially. High accuracy on the
+benchmark does not mean the model works in the field. Details are in the project's technical report.</div>
 </section>
 
 <section>
@@ -93,7 +89,7 @@ Configuration A uses only the uploaded image. Configuration B adds stability und
 <p class="sub" style="margin-top:14px">The most useful signals were stability mean pred prob, stability min pred prob, noise sigma, entropy norm.</p>
 <div class="note w"><b>Honest caveat.</b> On clean images alone, errors were rare. The simple confidence threshold scored a higher PR-AUC
 (0.414) than Random Forest B (0.320). The Random Forest's advantage comes
-from degraded images. On PlantDoc, its ranking ability was weak (ROC-AUC 0.63).</div>
+from degraded images. On real field photos its ability to separate right from wrong predictions was much weaker.</div>
 </section>
 
 <section>
@@ -104,7 +100,7 @@ from degraded images. On PlantDoc, its ranking ability was weak (ROC-AUC 0.63).<
 <li><b>Data:</b> PlantVillage, 54,305 images in 38 classes. The split is by duplicate group (exact copies, pixel-confirmed
 near-duplicates and photos of the same leaf stay together): train 38,014, val 5,433, test 5,432, calibration 5,426. Seed 42.</li>
 <li><b>Classifier:</b> EfficientNet-B0 (ImageNet start), fine-tuned for 6 epochs. The best epoch was chosen on validation macro-F1.</li>
-<li><b>Leakage safeguards:</b> the scaler and thresholds come from non-test data, the test set was evaluated once, and PlantDoc was never trained on.</li>
+<li><b>Leakage safeguards:</b> the scaler and thresholds come from non-test data, the test set was evaluated once, and the external field-photo set was never trained on.</li>
 </ul>
 </section>
 
@@ -115,9 +111,11 @@ near-duplicates and photos of the same leaf stay together): train 38,014, val 5,
 </section>
 
 <section id="run">
-<h2>Run the live app</h2>
-<p class="sub">The interactive app runs on your own computer: Disease Detection, Robustness Lab, Reliability Report and Model Evaluation.
-It loads the trained models, so no training is needed.</p>
+<h2>Run the app</h2>
+<p class="sub">The app runs on your own computer and loads the trained models, so no training is needed. Upload <b>one</b> leaf
+photo and everything runs automatically: the disease prediction with its confidence (EfficientNet-B0), the reliability check
+(6 slightly changed copies plus the Random Forest's estimated error risk), and a robustness check under brightness, blur, noise, JPEG
+and low-resolution conditions.</p>
 <pre>git clone https://github.com/ANSHSINGH5999/AgriShield.git
 cd AgriShield
 # Windows: double-click setup_windows.bat once, then run_app.bat

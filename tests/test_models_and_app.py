@@ -33,10 +33,55 @@ def test_sample_image_gives_real_prediction_and_risk():
     assert 0 <= out["risk"] <= 1 and 0 <= out["stability"] <= 1
 
 
-@needs_models
-def test_app_starts_and_pages_render():
+PAGES = ["Disease Detection", "Model Performance", "About"]
+
+
+def _app():
     from streamlit.testing.v1 import AppTest
-    for page in ["Dashboard", "Disease Detection", "Robustness Lab", "Reliability Report", "Model Evaluation", "About"]:
-        at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=240).run()
+    return AppTest.from_file(str(ROOT / "app.py"), default_timeout=300)
+
+
+def _all_text(at) -> str:
+    parts = [m.value for m in at.markdown] + [c.value for c in at.caption] + [h.value for h in at.header] + \
+            [i.value for i in at.info] + [str(df.value) for df in at.dataframe]
+    return "\n".join(str(p) for p in parts)
+
+
+@needs_models
+def test_navigation_has_only_three_pages_and_they_render():
+    at = _app().run()
+    assert list(at.sidebar.radio[0].options) == PAGES
+    for page in PAGES:
+        at = _app().run()
         at.sidebar.radio[0].set_value(page).run()
         assert not at.exception, f"{page}: {at.exception}"
+
+
+@needs_models
+def test_one_upload_runs_the_whole_demo_automatically():
+    at = _app().run()
+    at.selectbox[0].set_value(sorted(p.name for p in (ROOT / "assets" / "samples").glob("*.jpg"))[0]).run()
+    assert not at.exception
+    text = _all_text(at)
+    for heading in ["Disease prediction", "Prediction reliability", "Automatic robustness check", "Final result"]:
+        assert heading in text, heading
+    assert "Prediction agreement" in text and "EfficientNet-B0" in text
+    # no manual controls left on the main page
+    assert len(at.slider) == 0 and len(at.toggle) == 0
+
+
+@needs_models
+def test_external_plantdoc_result_not_shown_in_the_app():
+    for page in PAGES:
+        at = _app().run()
+        at.sidebar.radio[0].set_value(page).run()
+        text = _all_text(at)
+        assert "PlantDoc" not in text and "18.0%" not in text, page
+
+
+def test_robustness_demo_uses_existing_config_strengths():
+    from src.config import load_config
+    from src.robustness_demo import DEMO_SEVERITY, demo_conditions
+    cfg = load_config()
+    for _, fam, val in demo_conditions(cfg):
+        assert val == float(cfg["perturbations"][fam][DEMO_SEVERITY - 1])

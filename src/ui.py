@@ -40,6 +40,23 @@ div[data-testid="stFileUploader"] section {{ border-radius: 16px; border: 2px da
 .stButton>button, .stDownloadButton>button {{ background: var(--forest); color: #fff; border-radius: 12px; border: 0; padding: .55rem 1.1rem; font-weight: 700; }}
 .stButton>button:hover {{ background: #22573a; color:#fff; }}
 img {{ border-radius: 14px; }}
+.step {{ display:flex; align-items:center; gap:10px; margin: 30px 0 12px; }}
+.step .num {{ width:30px; height:30px; border-radius:50%; background:var(--forest); color:#fff; display:flex; align-items:center;
+             justify-content:center; font-weight:700; font-size:.9rem; flex:none; }}
+.step h2 {{ margin:0 !important; font-size:1.55rem !important; }}
+.big {{ background:#fff; border:1px solid #e3e6dc; border-radius:20px; padding:22px 24px; height:100%; }}
+.big .label {{ font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:700; }}
+.big .value {{ font-family:'Fraunces', Georgia, serif; font-size:2.1rem; line-height:1.15; color:var(--forest); margin-top:6px; }}
+.big .note {{ font-size:.85rem; color:var(--muted); margin-top:6px; }}
+.status-ok {{ color:#22562f !important; }} .status-warn {{ color:#8a4b0c !important; }}
+.robust {{ width:100%; border-collapse:collapse; background:#fff; border:1px solid #e3e6dc; border-radius:16px; overflow:hidden; }}
+.robust th, .robust td {{ padding:10px 14px; border-bottom:1px solid #eef0ea; text-align:left; font-size:.95rem; }}
+.robust th {{ font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); background:#fbfcf8; }}
+.robust tr:last-child td {{ border-bottom:0; }}
+.final {{ background:linear-gradient(135deg, {FOREST} 0%, #24603d 100%); color:#eef5ec; border-radius:22px; padding:24px 28px; }}
+.final .row {{ display:flex; justify-content:space-between; gap:16px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.14); }}
+.final .row:last-child {{ border-bottom:0; }}
+.final .k {{ color:{SPROUT}; font-size:.9rem; }} .final .v {{ font-weight:700; text-align:right; }}
 </style>
 """
 
@@ -68,6 +85,15 @@ def card(label: str, value: str, note: str = "") -> None:
 
 def banner(kind: str, text: str) -> None:
     st.markdown(f'<div class="banner {kind}">{text}</div>', unsafe_allow_html=True)
+
+
+def step(num: int, title: str) -> None:
+    st.markdown(f'<div class="step"><div class="num">{num}</div><h2>{html.escape(title)}</h2></div>', unsafe_allow_html=True)
+
+
+def big(label: str, value: str, note: str = "", css: str = "") -> None:
+    st.markdown(f'<div class="big"><div class="label">{html.escape(label)}</div><div class="value {css}">{html.escape(value)}</div>'
+                f'<div class="note">{html.escape(note)}</div></div>', unsafe_allow_html=True)
 
 
 def pct(x: float, digits: int = 1) -> str:

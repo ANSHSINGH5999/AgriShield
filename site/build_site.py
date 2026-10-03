@@ -30,12 +30,11 @@ def table(df: pd.DataFrame) -> str:
 
 
 def main():
-    clf, rel, ext, ds = j("classifier_test_metrics.json"), j("reliability_test_metrics.json"), j("external_plantdoc_metrics.json"), j("dataset_report.json")
+    clf, rel, ds = j("classifier_test_metrics.json"), j("reliability_test_metrics.json"), j("dataset_report.json")
     hist = j("training_history.json")
     rob = pd.read_csv(M / "robustness_by_corruption.csv")
     cmp_ = pd.read_csv(M / "reliability_baseline_comparison.csv")
     imp = pd.read_csv(M / "reliability_feature_importance_B.csv")
-    s, x = ext["strict_exact_mappings"], ext["extended_with_ambiguous"]
     pv = ds["plantvillage"]
     m = rel["methods"]
     rb, cb = m["Random Forest (B)"]["all conditions"], m["Confidence threshold"]["all conditions"]
@@ -112,7 +111,7 @@ a{{color:var(--leaf)}}a:focus-visible,.btn:focus-visible{{outline:3px solid var(
 <h1>AgriShield</h1>
 <p>Reliability-aware plant disease detection under image quality degradation. EfficientNet-B0 recognises 38 leaf conditions.
 A Random Forest estimates the risk that each prediction is wrong.</p>
-<div class="links"><a class="btn p" href="{REPO}">Code, models &amp; app on GitHub</a><a class="btn s" href="#run">Run the live app</a></div>
+<div class="links"><a class="btn p" href="{REPO}">Code, models &amp; app on GitHub</a><a class="btn s" href="#run">How to run the app</a></div>
 </div></header>
 <div class="wrap">
 
@@ -133,13 +132,9 @@ A Random Forest estimates the risk that each prediction is wrong.</p>
 <div class="card"><div class="l">Precision of warnings</div><div class="v">{pc(rb['precision'])}</div><div class="n">baseline {pc(cb['precision'])}</div></div>
 <div class="card"><div class="l">False alarms</div><div class="v">{pc(rb['false_alarm_rate'])}</div><div class="n">baseline {pc(cb['false_alarm_rate'])}</div></div>
 </div>
-<span class="tag">EXTERNAL · PlantDoc field photos (never trained on)</span>
-<div class="grid">
-<div class="card"><div class="l">External accuracy</div><div class="v">{pc(s['accuracy'])}</div><div class="n">{s['images']:,} images, exact label matches</div></div>
-<div class="card"><div class="l">External top-3 accuracy</div><div class="v">{pc(s['top3_accuracy'])}</div><div class="n">with ambiguous matches: {pc(x['accuracy'])} top-1</div></div>
-</div>
-<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. On real field photos (PlantDoc)
-the same model reached {pc(s['accuracy'])}. High accuracy on the benchmark does not mean the model works in the field.</div>
+<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. In an external
+evaluation on real field photos (different backgrounds, several leaves, lighting) accuracy dropped substantially. High accuracy on the
+benchmark does not mean the model works in the field. Details are in the project's technical report.</div>
 </section>
 
 <section>
@@ -161,7 +156,7 @@ Configuration A uses only the uploaded image. Configuration B adds stability und
 <p class="sub" style="margin-top:14px">The most useful signals were {html.escape(top_feats)}.</p>
 <div class="note w"><b>Honest caveat.</b> On clean images alone, errors were rare. The simple confidence threshold scored a higher PR-AUC
 ({clean_cmp['Confidence threshold']:.3f}) than Random Forest B ({clean_cmp['Random Forest (B)']:.3f}). The Random Forest's advantage comes
-from degraded images. On PlantDoc, its ranking ability was weak (ROC-AUC {s['reliability_B']['roc_auc']:.2f}).</div>
+from degraded images. On real field photos its ability to separate right from wrong predictions was much weaker.</div>
 </section>
 
 <section>
@@ -172,7 +167,7 @@ from degraded images. On PlantDoc, its ranking ability was weak (ROC-AUC {s['rel
 <li><b>Data:</b> PlantVillage, {pv['files']:,} images in {pv['classes']} classes. The split is by duplicate group (exact copies, pixel-confirmed
 near-duplicates and photos of the same leaf stay together): {', '.join(f"{k} {v:,}" for k, v in pv['split_sizes'].items())}. Seed {pv['split_seed']}.</li>
 <li><b>Classifier:</b> EfficientNet-B0 (ImageNet start), fine-tuned for {len(hist['history'])} epochs. The best epoch was chosen on validation macro-F1.</li>
-<li><b>Leakage safeguards:</b> the scaler and thresholds come from non-test data, the test set was evaluated once, and PlantDoc was never trained on.</li>
+<li><b>Leakage safeguards:</b> the scaler and thresholds come from non-test data, the test set was evaluated once, and the external field-photo set was never trained on.</li>
 </ul>
 </section>
 
@@ -183,9 +178,11 @@ near-duplicates and photos of the same leaf stay together): {', '.join(f"{k} {v:
 </section>
 
 <section id="run">
-<h2>Run the live app</h2>
-<p class="sub">The interactive app runs on your own computer: Disease Detection, Robustness Lab, Reliability Report and Model Evaluation.
-It loads the trained models, so no training is needed.</p>
+<h2>Run the app</h2>
+<p class="sub">The app runs on your own computer and loads the trained models, so no training is needed. Upload <b>one</b> leaf
+photo and everything runs automatically: the disease prediction with its confidence (EfficientNet-B0), the reliability check
+(6 slightly changed copies plus the Random Forest's estimated error risk), and a robustness check under brightness, blur, noise, JPEG
+and low-resolution conditions.</p>
 <pre>git clone {REPO}.git
 cd AgriShield
 # Windows: double-click setup_windows.bat once, then run_app.bat
