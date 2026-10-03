@@ -1,4 +1,5 @@
 """Need the trained files in models/ (shipped with the project)."""
+import re
 from pathlib import Path
 
 import pytest
@@ -42,7 +43,8 @@ def _app():
 
 
 def _all_text(at) -> str:
-    parts = [m.value for m in at.markdown] + [c.value for c in at.caption] + [h.value for h in at.header] + \
+    parts = [m.value for m in at.markdown if not m.value.lstrip().startswith("<style>")] + \
+            [c.value for c in at.caption] + [h.value for h in at.header] + \
             [i.value for i in at.info] + [str(df.value) for df in at.dataframe]
     return "\n".join(str(p) for p in parts)
 
@@ -63,20 +65,31 @@ def test_one_upload_runs_the_whole_demo_automatically():
     at.selectbox[0].set_value(sorted(p.name for p in (ROOT / "assets" / "samples").glob("*.jpg"))[0]).run()
     assert not at.exception
     text = _all_text(at)
-    for heading in ["Disease prediction", "Prediction reliability", "Automatic robustness check", "Final result"]:
+    for heading in ["Disease prediction", "Reliability assessment", "Automatic robustness test", "Final assessment"]:
         assert heading in text, heading
-    assert "Prediction agreement" in text and "EfficientNet-B0" in text
-    # no manual controls left on the main page
+    assert "Estimated error risk" in text and "Reference" in text
+    assert re.search(r"Prediction agreement: [0-5]/5 degraded conditions", text)
+    assert ("Prediction appears reliable" in text) != ("may be unreliable under changed image conditions" in text)
+    # clean main page: no manual controls, no internal threshold or feature details
     assert len(at.slider) == 0 and len(at.toggle) == 0
+    for internal in ["Warning at", "warning at", "threshold", "entropy", "margin", ".joblib", "PlantDoc"]:
+        assert internal not in text, internal
 
 
 @needs_models
-def test_external_plantdoc_result_not_shown_in_the_app():
-    for page in PAGES:
-        at = _app().run()
-        at.sidebar.radio[0].set_value(page).run()
-        text = _all_text(at)
-        assert "PlantDoc" not in text and "18.0%" not in text, page
+def test_plantdoc_only_on_model_performance_and_clearly_labelled():
+    at = _app().run()
+    at.sidebar.radio[0].set_value("Model Performance").run()
+    assert not at.exception
+    assert "External PlantDoc Evaluation" in _all_text(at)
+    at = _app().run()
+    assert "PlantDoc" not in _all_text(at)            # default page = Disease Detection
+
+
+def test_no_novelty_claims_in_the_app():
+    text = (ROOT / "app.py").read_text().lower()
+    for claim in ["novel", "first-ever", "world's first", "state-of-the-art"]:
+        assert claim not in text, claim
 
 
 def test_robustness_demo_uses_existing_config_strengths():

@@ -1,17 +1,19 @@
 """Automatic robustness demonstration for the live app (presentation only - not used by the reliability model).
 
-Uses the existing perturbation functions and the existing severity-2 ("moderate") strengths from config.yaml,
-applied one at a time to the standardised image, exactly like the offline robustness evaluation.
+Uses the existing perturbation functions and the existing severity-1 ("mild") strengths from config.yaml, applied one at a
+time to the standardised image, exactly like the offline robustness evaluation. Severity 1 is used because at severity 2 the
+noise level alone drops measured test accuracy to about 20%, so nearly every image would fail and the final assessment would
+not distinguish one image from another. All three severities remain in the offline evaluation (Model Performance page).
 """
 from PIL import Image
 
 from src import perturbations
 from src.imaging import standardise
 
-# (display label, perturbation family) - strengths come from config.yaml, severity 2 of 3
-DEMO_FAMILIES = [("Brightness (darker)", "brightness_low"), ("Blur", "gaussian_blur"), ("Noise", "gaussian_noise"),
+# (display label, perturbation family) - strengths come from config.yaml, severity 1 of 3
+DEMO_FAMILIES = [("Brightness change", "brightness_low"), ("Blur", "gaussian_blur"), ("Gaussian noise", "gaussian_noise"),
                  ("JPEG compression", "jpeg_compression"), ("Low resolution", "low_resolution")]
-DEMO_SEVERITY = 2
+DEMO_SEVERITY = 1
 
 
 def demo_conditions(cfg: dict) -> list[tuple[str, str, float]]:
