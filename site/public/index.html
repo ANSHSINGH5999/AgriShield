@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgriShield</title>
+<meta name="description" content="Reliability-aware plant disease detection under image quality degradation - measured results.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#17432b;--leaf:#3f8a55;--sprout:#cfe8c4;--cream:#f7f6f0;--card:#fff;--ink:#1d2a22;--muted:#5d6b62;--line:#e3e6dc;--amber:#c98a1b;--red:#b5452f}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 'DM Sans','Segoe UI',system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+header{background:linear-gradient(135deg,#17432b,#24603d);color:#f3f8f1}
+header .wrap{padding-block:56px 44px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;font-weight:700;color:var(--sprout)}
+h1{font:700 clamp(2.2rem,5vw,3.4rem)/1.05 Fraunces,Georgia,serif;margin:.3em 0 .35em;text-wrap:balance}
+header p{max-width:66ch;color:#d7ead2;font-size:1.08rem;margin:0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.btn{display:inline-block;padding:.6rem 1.1rem;border-radius:12px;font-weight:700;text-decoration:none}
+.btn.p{background:var(--sprout);color:var(--forest)}.btn.s{border:1px solid rgba(255,255,255,.4);color:#fff}
+h2{font:700 1.9rem/1.15 Fraunces,Georgia,serif;color:var(--forest);margin:0 0 .3em;text-wrap:balance}
+section{padding-top:52px}.sub{color:var(--muted);max-width:72ch;margin:0 0 18px}
+.tag{display:inline-block;background:var(--sprout);color:var(--forest);border-radius:999px;padding:3px 11px;font-size:.75rem;font-weight:700;margin:18px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.card .l{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.card .v{font:600 2rem/1.15 Fraunces,Georgia,serif;color:var(--forest);margin-top:4px;font-variant-numeric:tabular-nums}
+.card .n{font-size:.85rem;color:var(--muted)}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}th,td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}tr:last-child td{border-bottom:0}
+img.fig{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:16px;margin-top:14px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.note{border-radius:14px;padding:14px 18px;margin-top:16px;max-width:85ch}
+.note.w{background:#fdf3e1;border:1px solid #efd29a;color:#6b4a0c}.note.ok{background:#e8f4e3;border:1px solid #b9dcae;color:#1d4d2c}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.gallery figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+.gallery img{width:100%;height:auto;border-radius:10px;display:block}.gallery figcaption{font-size:.8rem;color:var(--muted);margin-top:6px}
+ol,ul{max-width:80ch;padding-left:22px}li{margin:5px 0}
+pre{background:#10241a;color:#e3f1df;border-radius:14px;padding:16px 18px;overflow-x:auto;font-size:.88rem}
+footer{color:var(--muted);font-size:.85rem;padding-top:56px}
+a{color:var(--leaf)}a:focus-visible,.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+</style></head><body>
+<header><div class="wrap">
+<div class="eyebrow">Research demonstration · measured results</div>
+<h1>AgriShield</h1>
+<p>Reliability-aware plant disease detection under image quality degradation. EfficientNet-B0 recognises 38 leaf conditions.
+A Random Forest estimates the risk that each prediction is wrong.</p>
+<div class="links"><a class="btn p" href="https://github.com/ANSHSINGH5999/AgriShield">Code, models &amp; app on GitHub</a><a class="btn s" href="#run">Run the live app</a></div>
+</div></header>
+<div class="wrap">
+
+<section>
+<h2>Results at a glance</h2>
+<p class="sub">Every number on this page is read from the project's saved evaluation files. Internal and external results are kept separate.</p>
+<span class="tag">INTERNAL TEST · PlantVillage, locked held-out set</span>
+<div class="grid">
+<div class="card"><div class="l">Test accuracy</div><div class="v">99.80%</div><div class="n">clean images</div></div>
+<div class="card"><div class="l">Macro F1-score</div><div class="v">0.996</div><div class="n">38 classes</div></div>
+<div class="card"><div class="l">Test images</div><div class="v">5,432</div><div class="n">never used for training or tuning</div></div>
+<div class="card"><div class="l">Model size</div><div class="v">16.5 MB</div><div class="n">4,056,226 parameters</div></div>
+</div>
+<span class="tag">RELIABILITY · positive = incorrect prediction</span>
+<div class="grid">
+<div class="card"><div class="l">PR-AUC, Random Forest B</div><div class="v">0.947</div><div class="n">confidence baseline 0.848</div></div>
+<div class="card"><div class="l">Recall of errors</div><div class="v">97.4%</div><div class="n">baseline 95.7%</div></div>
+<div class="card"><div class="l">Precision of warnings</div><div class="v">66.7%</div><div class="n">baseline 57.7%</div></div>
+<div class="card"><div class="l">False alarms</div><div class="v">10.6%</div><div class="n">baseline 15.3%</div></div>
+</div>
+<span class="tag">EXTERNAL · PlantDoc field photos (never trained on)</span>
+<div class="grid">
+<div class="card"><div class="l">External accuracy</div><div class="v">18.0%</div><div class="n">2,234 images, exact label matches</div></div>
+<div class="card"><div class="l">External top-3 accuracy</div><div class="v">38.4%</div><div class="n">with ambiguous matches: 19.5% top-1</div></div>
+</div>
+<div class="note w"><b>Read this before the 99.8%.</b> PlantVillage photos show one leaf on a plain background. On real field photos (PlantDoc)
+the same model reached 18.0%. High accuracy on the benchmark does not mean the model works in the field.</div>
+</section>
+
+<section>
+<h2>How much do bad photos hurt?</h2>
+<p class="sub">The same 5,432 test images were degraded at three severities. The largest drop was
+gaussian noise at severity 3: accuracy 2.2%.</p>
+<img class="fig" src="figures/robustness_accuracy.png" alt="Test accuracy and prediction-change rate by degradation type and severity">
+<div class="tw"><table><thead><tr><th>degradation</th><th>severity</th><th>value</th><th>accuracy</th><th>macro-F1</th><th>predictions changed</th></tr></thead><tbody><tr><td>brightness high</td><td>1</td><td>1.3</td><td>99.6%</td><td>0.993</td><td>0.2%</td></tr><tr><td>brightness high</td><td>2</td><td>1.6</td><td>98.0%</td><td>0.976</td><td>1.8%</td></tr><tr><td>brightness high</td><td>3</td><td>2.0</td><td>91.6%</td><td>0.898</td><td>8.3%</td></tr><tr><td>brightness low</td><td>1</td><td>0.7</td><td>99.7%</td><td>0.995</td><td>0.2%</td></tr><tr><td>brightness low</td><td>2</td><td>0.5</td><td>98.9%</td><td>0.986</td><td>1.0%</td></tr><tr><td>brightness low</td><td>3</td><td>0.3</td><td>94.3%</td><td>0.932</td><td>5.5%</td></tr><tr><td>gaussian blur</td><td>1</td><td>1.0</td><td>98.6%</td><td>0.984</td><td>1.4%</td></tr><tr><td>gaussian blur</td><td>2</td><td>2.0</td><td>84.3%</td><td>0.831</td><td>15.7%</td></tr><tr><td>gaussian blur</td><td>3</td><td>3.0</td><td>52.5%</td><td>0.404</td><td>47.4%</td></tr><tr><td>gaussian noise</td><td>1</td><td>0.05</td><td>82.8%</td><td>0.804</td><td>17.1%</td></tr><tr><td>gaussian noise</td><td>2</td><td>0.1</td><td>20.5%</td><td>0.110</td><td>79.5%</td></tr><tr><td>gaussian noise</td><td>3</td><td>0.2</td><td>2.2%</td><td>0.002</td><td>97.8%</td></tr><tr><td>jpeg compression</td><td>1</td><td>30.0</td><td>99.5%</td><td>0.993</td><td>0.4%</td></tr><tr><td>jpeg compression</td><td>2</td><td>15.0</td><td>96.1%</td><td>0.954</td><td>3.8%</td></tr><tr><td>jpeg compression</td><td>3</td><td>5.0</td><td>41.4%</td><td>0.368</td><td>58.6%</td></tr><tr><td>low resolution</td><td>1</td><td>0.5</td><td>96.5%</td><td>0.964</td><td>3.5%</td></tr><tr><td>low resolution</td><td>2</td><td>0.25</td><td>76.3%</td><td>0.743</td><td>23.6%</td></tr><tr><td>low resolution</td><td>3</td><td>0.125</td><td>29.5%</td><td>0.188</td><td>70.5%</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>Can we tell when the model is wrong?</h2>
+<p class="sub">The Random Forest was trained only on a separate calibration split. Hyper-parameters and every threshold were chosen on
+reliability-validation data. Test rows are each image clean plus 3 sampled degradations (21,728 rows).
+Configuration A uses only the uploaded image. Configuration B adds stability under 6 fixed mild perturbations (6 extra model passes).</p>
+<div class="tw"><table><thead><tr><th>method</th><th>PR-AUC</th><th>ROC-AUC</th><th>precision</th><th>recall</th><th>false alarms</th></tr></thead><tbody><tr><td>Confidence threshold</td><td>0.848</td><td>0.962</td><td>57.7%</td><td>95.7%</td><td>15.3%</td></tr><tr><td>Margin threshold</td><td>0.809</td><td>0.959</td><td>56.9%</td><td>95.9%</td><td>15.9%</td></tr><tr><td>Random Forest (A)</td><td>0.886</td><td>0.972</td><td>63.7%</td><td>95.0%</td><td>11.8%</td></tr><tr><td>Random Forest (B)</td><td>0.947</td><td>0.986</td><td>66.7%</td><td>97.4%</td><td>10.6%</td></tr></tbody></table></div>
+<div class="two"><img class="fig" src="figures/reliability_risk_coverage_calibration.png" alt="Risk-coverage curves and calibration of the reliability score">
+<img class="fig" src="figures/reliability_feature_importance.png" alt="Permutation importance of reliability features"></div>
+<p class="sub" style="margin-top:14px">The most useful signals were stability mean pred prob, stability min pred prob, noise sigma, entropy norm.</p>
+<div class="note w"><b>Honest caveat.</b> On clean images alone, errors were rare. The simple confidence threshold scored a higher PR-AUC
+(0.414) than Random Forest B (0.320). The Random Forest's advantage comes
+from degraded images. On PlantDoc, its ranking ability was weak (ROC-AUC 0.63).</div>
+</section>
+
+<section>
+<h2>Training and test details</h2>
+<div class="two"><img class="fig" src="figures/training_curves.png" alt="Training and validation curves">
+<img class="fig" src="figures/confusion_matrix_test.png" alt="Confusion matrix on the clean test set"></div>
+<ul>
+<li><b>Data:</b> PlantVillage, 54,305 images in 38 classes. The split is by duplicate group (exact copies, pixel-confirmed
+near-duplicates and photos of the same leaf stay together): train 38,014, val 5,433, test 5,432, calibration 5,426. Seed 42.</li>
+<li><b>Classifier:</b> EfficientNet-B0 (ImageNet start), fine-tuned for 6 epochs. The best epoch was chosen on validation macro-F1.</li>
+<li><b>Leakage safeguards:</b> the scaler and thresholds come from non-test data, the test set was evaluated once, and PlantDoc was never trained on.</li>
+</ul>
+</section>
+
+<section>
+<h2>Sample test images</h2>
+<p class="sub">These are bundled with the app so it works without downloading the datasets (PlantVillage, CC BY-SA 3.0).</p>
+<div class="gallery"><figure><img src="samples/Tomato__Late_blight.jpg" alt="Tomato___Late_blight" loading="lazy"><figcaption>Tomato — Late blight</figcaption></figure><figure><img src="samples/Apple__Apple_scab.jpg" alt="Apple___Apple_scab" loading="lazy"><figcaption>Apple — Apple scab</figcaption></figure><figure><img src="samples/Corn_maize__Common_rust_.jpg" alt="Corn_(maize)___Common_rust_" loading="lazy"><figcaption>Corn (maize) — Common rust </figcaption></figure><figure><img src="samples/Grape__Black_rot.jpg" alt="Grape___Black_rot" loading="lazy"><figcaption>Grape — Black rot</figcaption></figure><figure><img src="samples/Potato__Early_blight.jpg" alt="Potato___Early_blight" loading="lazy"><figcaption>Potato — Early blight</figcaption></figure><figure><img src="samples/Tomato__healthy.jpg" alt="Tomato___healthy" loading="lazy"><figcaption>Tomato — healthy</figcaption></figure><figure><img src="samples/Pepper_bell__Bacterial_spot.jpg" alt="Pepper,_bell___Bacterial_spot" loading="lazy"><figcaption>Pepper, bell — Bacterial spot</figcaption></figure><figure><img src="samples/Squash__Powdery_mildew.jpg" alt="Squash___Powdery_mildew" loading="lazy"><figcaption>Squash — Powdery mildew</figcaption></figure></div>
+</section>
+
+<section id="run">
+<h2>Run the live app</h2>
+<p class="sub">The interactive app runs on your own computer: Disease Detection, Robustness Lab, Reliability Report and Model Evaluation.
+It loads the trained models, so no training is needed.</p>
+<pre>git clone https://github.com/ANSHSINGH5999/AgriShield.git
+cd AgriShield
+# Windows: double-click setup_windows.bat once, then run_app.bat
+python -m venv .venv &amp;&amp; .venv\Scripts\activate      (macOS/Linux: source .venv/bin/activate)
+pip install -r requirements.txt
+streamlit run app.py</pre>
+</section>
+
+<footer>AgriShield is a research demonstration, not a replacement for diagnosis by an agricultural expert. Data: PlantVillage
+(Mohanty, Hughes &amp; Salathé, 2016; CC BY-SA 3.0) and PlantDoc (Singh et al., 2020; CC BY 4.0). No novelty is claimed.
+Source: <a href="https://github.com/ANSHSINGH5999/AgriShield">https://github.com/ANSHSINGH5999/AgriShield</a></footer>
+</div></body></html>
