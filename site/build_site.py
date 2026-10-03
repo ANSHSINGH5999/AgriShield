@@ -117,7 +117,7 @@ A Random Forest estimates the risk that each prediction is wrong.</p>
 
 <section>
 <h2>Results at a glance</h2>
-<p class="sub">Every number on this page is read from the project's saved evaluation files. Internal and external results are kept separate.</p>
+<p class="sub">Every number on this page is read from the project's saved evaluation files (locked PlantVillage test set).</p>
 <span class="tag">INTERNAL TEST · PlantVillage, locked held-out set</span>
 <div class="grid">
 <div class="card"><div class="l">Test accuracy</div><div class="v">{pc(clf['accuracy'], 2)}</div><div class="n">clean images</div></div>
