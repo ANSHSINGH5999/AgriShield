@@ -9,7 +9,7 @@ AgriShield has two parts:
 2. **Random Forest** estimates the risk that this prediction is **wrong**. It uses the classifier's confidence, image-quality
    indicators and, optionally, how stable the prediction stays under 6 small fixed changes to the image.
 
-A Streamlit website shows the measured results and lets you test your own images.
+A 3-page Streamlit app lets you upload one leaf photo and see the prediction, the reliability assessment and an automatic robustness test, plus the measured results.
 
 - **Results website:** https://agrishield-five.vercel.app (measured results, no installation needed)
 - **Code, trained models and the interactive app:** https://github.com/ANSHSINGH5999/AgriShield
@@ -67,44 +67,67 @@ py -3.12 -m venv .venv
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 python -m pytest -q tests
-streamlit run app.py
+python -m streamlit run app.py
 ```
 On macOS or Linux, use `python3.12 -m venv .venv` and `source .venv/bin/activate`.
 
 ---
 
-## Using the website
+## Using the app
+
+The app has **3 pages**. The whole demonstration happens on the first one.
 
 | Page | What it shows |
 |---|---|
-| **Dashboard** | Measured test accuracy, macro-F1, reliability metrics and external (PlantDoc) results, each labelled |
-| **Disease Detection** | Upload a JPG/PNG to see the predicted disease, top-3, confidence, reliability risk and quality indicators |
-| **Robustness Lab** | Change brightness, blur, noise, JPEG quality and resolution; compares the original and altered predictions |
-| **Reliability Report** | Risk, status, threshold (adjustable; default chosen on validation data), stability and observations |
-| **Model Evaluation** | Robustness by corruption, confusion matrix, reliability vs baselines, feature importance, external results |
-| **About** | Method, data sources, limitations and disclaimer |
+| **Disease Detection** | Upload **one** leaf photo. Everything else is automatic: predicted disease and confidence (EfficientNet-B0), reliability assessment with estimated error risk (Random Forest), an automatic robustness test (5 degraded versions), and a final assessment. |
+| **Model Performance** | Measured results: classifier accuracy, precision, recall and F1 on the locked PlantVillage test set; robustness under degradation; the reliability model vs simple baselines; and the clearly labelled **External PlantDoc Evaluation** (domain shift). |
+| **About** | Pipeline, models, data, contribution, limitations and disclaimer. |
 
-Sample images (from the PlantVillage **test** split) are in `assets/samples` and can be picked in the app.
+**What happens after one upload**
+1. **Disease prediction.** The image is checked and loaded, resized to 256 px, centre-cropped to 224 and normalised. EfficientNet-B0
+   gives the predicted disease and its **confidence**.
+2. **Reliability assessment.** Six slightly changed copies of the image are classified automatically to measure stability. The
+   **Random Forest** combines this with the confidence and simple image-quality measures to give an **estimated error risk**, then
+   compares it with the threshold chosen on validation data. The result is "Reliable" or "Potentially Unreliable". This is an
+   estimate, not a guarantee.
+3. **Automatic robustness test.** Five degraded versions are made with the project's own perturbation functions, at the mild
+   (severity 1) strengths from `config.yaml`:
+   - brightness ×0.7
+   - blur σ=1
+   - Gaussian noise 0.05
+   - JPEG quality 30
+   - resolution ×0.5
 
-**Four different numbers, kept separate:**
+   At severity 2, noise alone drops measured test accuracy to about 20%, so nearly every image would fail and the final assessment
+   could not tell images apart. Severities 1–3 are all reported on the Model Performance page.
+
+   Each is classified, and its prediction is compared with the original's. The page shows **"Prediction agreement: X/5 degraded
+   conditions"**.
+4. **Final assessment.** "Prediction appears reliable" appears only if the reliability model does not flag the prediction **and**
+   all 5 degraded versions agree. Otherwise the page shows "Prediction may be unreliable under changed image conditions".
+
+There are no sliders, toggles or threshold controls. Sample images from the PlantVillage **test** split are in `assets/samples` and
+can be picked instead of uploading.
+
+**Keep these numbers apart:**
 - **Test accuracy** is measured once on held-out labelled test images.
-- **Prediction confidence** is the model's probability for its predicted class on *your* image. It is not accuracy.
-- **Reliability risk** is the Random Forest's estimated chance that the prediction is wrong. It is a score, not a guarantee.
-- **Stability** is the share of the 6 slightly-changed copies of your image that keep the same prediction.
+- **Confidence** is the model's probability for its predicted class on *your* image. It is not accuracy.
+- **Estimated error risk** is the Random Forest's estimated chance that the prediction is wrong. It is a score, not a guarantee.
 
 ---
 
 ## Project structure
 ```
 AgriShield/
-├── app.py                      Streamlit website
+├── app.py                      Streamlit app (3 pages: Disease Detection, Model Performance, About)
 ├── config.yaml                 every setting (seed, split, training, perturbations, stability policy)
 ├── src/                        library code
 │   ├── imaging.py              loading, standardising (shorter side 256), preprocessing (crop 224, ImageNet normalisation)
 │   ├── perturbations.py        brightness, blur, noise, JPEG, low-resolution
 │   ├── quality.py              brightness, contrast, sharpness, noise estimate, saturation, size
 │   ├── reliability.py          reliability features, fixed feature schema, Random Forest loader
-│   ├── predictor.py            image -> prediction + top-3 + quality + stability + risk (used by the app)
+│   ├── predictor.py            image -> prediction + confidence + stability + estimated error risk (used by the app)
+│   ├── robustness_demo.py      automatic 5-condition robustness test shown in the app (reuses perturbations.py)
 │   ├── model.py, data.py, datasets.py, engine.py, external_mapping.py, reliability_metrics.py, ui.py, plots.py
 ├── scripts/                    pipeline steps (see "Training")
 ├── models/                     trained files (see below)
@@ -183,7 +206,7 @@ On Windows, if data loading hangs, set `num_workers: 0` in `config.yaml`.
 | `'py' is not recognized` | Reinstall Python and tick "Add python.exe to PATH", or replace `py -3.12` with `python` |
 | `pip install` fails on torch | Use 64-bit Python 3.12 (not 3.13 or 32-bit), then run `python -m pip install --upgrade pip` and try again |
 | `Missing model file: models/...` | The `models` folder is incomplete: copy it from the original AgriShield folder, or retrain |
-| Port 8501 already in use | Run `streamlit run app.py --server.port 8502` |
+| Port 8501 already in use | Run `python -m streamlit run app.py --server.port 8502` |
 | Website shows "not available yet" | `reports/metrics` is missing: copy it, or run `evaluate_windows.bat` |
 | Training data loading hangs on Windows | Set `training: num_workers: 0` in `config.yaml` |
 | Want GPU training on Windows | Install the CUDA build of PyTorch from <https://pytorch.org/get-started/locally/>; the code uses CUDA automatically |
