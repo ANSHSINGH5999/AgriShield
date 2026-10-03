@@ -1,0 +1,13 @@
+# Fixed light theme so the custom styling is readable even when the computer uses dark mode.
+[theme]
+base = "light"
+primaryColor = "#17432b"
+backgroundColor = "#f7f6f0"
+secondaryBackgroundColor = "#e8f1e3"
+textColor = "#1d2a22"
+
+[server]
+maxUploadSize = 15          # MB, matches the app's own check
+
+[browser]
+gatherUsageStats = false

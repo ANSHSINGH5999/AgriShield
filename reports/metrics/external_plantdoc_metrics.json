@@ -1,0 +1,227 @@
+{
+  "dataset": "PlantDoc (TRAIN + TEST folders, external only)",
+  "eligible_images": 2572,
+  "evaluated_images": 2572,
+  "failures": [],
+  "excluded": {
+    "unmapped_or_no_match": 0,
+    "unreadable": 0,
+    "identical_to_plantvillage": 0
+  },
+  "strict_exact_mappings": {
+    "images": 2234,
+    "classes": 25,
+    "accuracy": 0.18039391226499552,
+    "top3_accuracy": 0.3836168307967771,
+    "macro_f1_over_present_classes": 0.17626571641987052,
+    "mean_confidence": 0.6948259395906566,
+    "reliability_A": {
+      "threshold": 0.277339774258743,
+      "n": 2234,
+      "incorrect_rate": 0.8196060877350044,
+      "precision": 0.8641370869033048,
+      "recall": 0.7711632987438558,
+      "f1": 0.815007215007215,
+      "f2": 0.7881223487385577,
+      "roc_auc": 0.6669374828057727,
+      "pr_auc": 0.8959635013252307,
+      "tp": 1412,
+      "fp": 222,
+      "fn": 419,
+      "tn": 181,
+      "false_negative_rate": 0.2288367012561442,
+      "false_alarm_rate": 0.5508684863523573,
+      "flagged_share": 0.7314234556848702
+    },
+    "reliability_B": {
+      "threshold": 0.1175,
+      "n": 2234,
+      "incorrect_rate": 0.8196060877350044,
+      "precision": 0.8552168815943728,
+      "recall": 0.7968323320589842,
+      "f1": 0.8249929318631609,
+      "f2": 0.8078626799557033,
+      "roc_auc": 0.6253216929825869,
+      "pr_auc": 0.8647109477147292,
+      "tp": 1459,
+      "fp": 247,
+      "fn": 372,
+      "tn": 156,
+      "false_negative_rate": 0.20316766794101584,
+      "false_alarm_rate": 0.6129032258064516,
+      "flagged_share": 0.7636526410026858
+    }
+  },
+  "extended_with_ambiguous": {
+    "images": 2572,
+    "classes": 28,
+    "accuracy": 0.19517884914463451,
+    "top3_accuracy": 0.40863141524105756,
+    "macro_f1_over_present_classes": 0.18141922142403513,
+    "mean_confidence": 0.696320776501743,
+    "reliability_A": {
+      "threshold": 0.277339774258743,
+      "n": 2572,
+      "incorrect_rate": 0.8048211508553654,
+      "precision": 0.8562334217506631,
+      "recall": 0.7797101449275362,
+      "f1": 0.8161820480404551,
+      "f2": 0.7939006394490901,
+      "roc_auc": 0.6807379178936428,
+      "pr_auc": 0.8924696123280568,
+      "tp": 1614,
+      "fp": 271,
+      "fn": 456,
+      "tn": 231,
+      "false_negative_rate": 0.22028985507246376,
+      "false_alarm_rate": 0.5398406374501992,
+      "flagged_share": 0.7328926905132193
+    },
+    "reliability_B": {
+      "threshold": 0.1175,
+      "n": 2572,
+      "incorrect_rate": 0.8048211508553654,
+      "precision": 0.8461147790756729,
+      "recall": 0.8048309178743961,
+      "f1": 0.8249566724436742,
+      "f2": 0.812762220704459,
+      "roc_auc": 0.6414135727620918,
+      "pr_auc": 0.8609847956523777,
+      "tp": 1666,
+      "fp": 303,
+      "fn": 404,
+      "tn": 199,
+      "false_negative_rate": 0.19516908212560385,
+      "false_alarm_rate": 0.603585657370518,
+      "flagged_share": 0.7655520995334371
+    }
+  },
+  "per_class_accuracy_strict": [
+    {
+      "plantdoc_class": "Apple Scab Leaf",
+      "accuracy": 0.11827956989247312,
+      "images": 93
+    },
+    {
+      "plantdoc_class": "Apple leaf",
+      "accuracy": 0.17582417582417584,
+      "images": 91
+    },
+    {
+      "plantdoc_class": "Apple rust leaf",
+      "accuracy": 0.011363636363636364,
+      "images": 88
+    },
+    {
+      "plantdoc_class": "Bell_pepper leaf",
+      "accuracy": 0.09836065573770492,
+      "images": 61
+    },
+    {
+      "plantdoc_class": "Blueberry leaf",
+      "accuracy": 0.10434782608695652,
+      "images": 115
+    },
+    {
+      "plantdoc_class": "Cherry leaf",
+      "accuracy": 0.0,
+      "images": 57
+    },
+    {
+      "plantdoc_class": "Corn Gray leaf spot",
+      "accuracy": 0.5,
+      "images": 68
+    },
+    {
+      "plantdoc_class": "Corn rust leaf",
+      "accuracy": 0.10344827586206896,
+      "images": 116
+    },
+    {
+      "plantdoc_class": "Peach leaf",
+      "accuracy": 0.018018018018018018,
+      "images": 111
+    },
+    {
+      "plantdoc_class": "Potato leaf early blight",
+      "accuracy": 0.13793103448275862,
+      "images": 116
+    },
+    {
+      "plantdoc_class": "Potato leaf late blight",
+      "accuracy": 0.17142857142857143,
+      "images": 105
+    },
+    {
+      "plantdoc_class": "Raspberry leaf",
+      "accuracy": 0.1092436974789916,
+      "images": 119
+    },
+    {
+      "plantdoc_class": "Soyabean leaf",
+      "accuracy": 0.0,
+      "images": 65
+    },
+    {
+      "plantdoc_class": "Squash Powdery mildew leaf",
+      "accuracy": 0.5769230769230769,
+      "images": 130
+    },
+    {
+      "plantdoc_class": "Strawberry leaf",
+      "accuracy": 0.0625,
+      "images": 96
+    },
+    {
+      "plantdoc_class": "Tomato Early blight leaf",
+      "accuracy": 0.26136363636363635,
+      "images": 88
+    },
+    {
+      "plantdoc_class": "Tomato Septoria leaf spot",
+      "accuracy": 0.2582781456953642,
+      "images": 151
+    },
+    {
+      "plantdoc_class": "Tomato leaf",
+      "accuracy": 0.015873015873015872,
+      "images": 63
+    },
+    {
+      "plantdoc_class": "Tomato leaf bacterial spot",
+      "accuracy": 0.00909090909090909,
+      "images": 110
+    },
+    {
+      "plantdoc_class": "Tomato leaf late blight",
+      "accuracy": 0.5225225225225225,
+      "images": 111
+    },
+    {
+      "plantdoc_class": "Tomato leaf mosaic virus",
+      "accuracy": 0.0,
+      "images": 54
+    },
+    {
+      "plantdoc_class": "Tomato mold leaf",
+      "accuracy": 0.01098901098901099,
+      "images": 91
+    },
+    {
+      "plantdoc_class": "Tomato two spotted spider mites leaf",
+      "accuracy": 0.0,
+      "images": 2
+    },
+    {
+      "plantdoc_class": "grape leaf",
+      "accuracy": 0.5362318840579711,
+      "images": 69
+    },
+    {
+      "plantdoc_class": "grape leaf black rot",
+      "accuracy": 0.328125,
+      "images": 64
+    }
+  ],
+  "note": "PlantDoc images are field photos (cluttered backgrounds, several leaves); PlantVillage images are single leaves on plain backgrounds. Results are reported separately and are not combined with PlantVillage results."
+}

@@ -1,0 +1,98 @@
+{
+  "positive_class": "1 = disease prediction is INCORRECT",
+  "threshold_rule": "maximise F2 on rel_val",
+  "stability_policy": [
+    [
+      "brightness_low",
+      0.85
+    ],
+    [
+      "brightness_high",
+      1.15
+    ],
+    [
+      "gaussian_blur",
+      1.0
+    ],
+    [
+      "gaussian_noise",
+      0.03
+    ],
+    [
+      "jpeg_compression",
+      60
+    ],
+    [
+      "low_resolution",
+      0.6
+    ]
+  ],
+  "sklearn_version": "1.9.1",
+  "trained_on": "calibration split, rel_train rows (clean + 18 corruptions per image)",
+  "configs": {
+    "A": {
+      "features": [
+        "max_prob",
+        "margin_top1_top2",
+        "entropy_norm",
+        "top3_mass",
+        "brightness",
+        "contrast",
+        "sharpness_log_lapvar",
+        "noise_sigma",
+        "saturation",
+        "original_min_side",
+        "aspect_ratio"
+      ],
+      "model_file": "reliability_rf_A.joblib",
+      "threshold": 0.277339774258743,
+      "hyperparameters": {
+        "n_estimators": 400,
+        "max_depth": null,
+        "min_samples_leaf": 5,
+        "max_features": 0.5
+      },
+      "extra_forward_passes": 0
+    },
+    "B": {
+      "features": [
+        "max_prob",
+        "margin_top1_top2",
+        "entropy_norm",
+        "top3_mass",
+        "brightness",
+        "contrast",
+        "sharpness_log_lapvar",
+        "noise_sigma",
+        "saturation",
+        "original_min_side",
+        "aspect_ratio",
+        "stability_agree_frac",
+        "stability_mean_pred_prob",
+        "stability_min_pred_prob",
+        "stability_std_pred_prob",
+        "stability_mean_l1_shift",
+        "stability_n_distinct"
+      ],
+      "model_file": "reliability_rf_B.joblib",
+      "threshold": 0.1175,
+      "hyperparameters": {
+        "n_estimators": 400,
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "max_features": "sqrt"
+      },
+      "extra_forward_passes": 6
+    }
+  },
+  "configs_baselines": {
+    "confidence_threshold": {
+      "score": "1 - max_prob",
+      "threshold_on_score": 0.012140449643135055
+    },
+    "margin_threshold": {
+      "score": "1 - (top1 - top2)",
+      "threshold_on_score": 0.017006214618683083
+    }
+  }
+}

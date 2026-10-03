@@ -1,0 +1,122 @@
+{
+  "plantvillage": {
+    "source": "https://github.com/spMohanty/PlantVillage-Dataset (raw/color)",
+    "files": 54305,
+    "unreadable": 0,
+    "classes": 38,
+    "class_counts": {
+      "Orange___Haunglongbing_(Citrus_greening)": 5507,
+      "Tomato___Tomato_Yellow_Leaf_Curl_Virus": 5357,
+      "Soybean___healthy": 5090,
+      "Peach___Bacterial_spot": 2297,
+      "Tomato___Bacterial_spot": 2127,
+      "Tomato___Late_blight": 1909,
+      "Squash___Powdery_mildew": 1835,
+      "Tomato___Septoria_leaf_spot": 1771,
+      "Tomato___Spider_mites Two-spotted_spider_mite": 1676,
+      "Apple___healthy": 1645,
+      "Tomato___healthy": 1591,
+      "Blueberry___healthy": 1502,
+      "Pepper,_bell___healthy": 1478,
+      "Tomato___Target_Spot": 1404,
+      "Grape___Esca_(Black_Measles)": 1383,
+      "Corn_(maize)___Common_rust_": 1192,
+      "Grape___Black_rot": 1180,
+      "Corn_(maize)___healthy": 1162,
+      "Strawberry___Leaf_scorch": 1109,
+      "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 1076,
+      "Cherry_(including_sour)___Powdery_mildew": 1052,
+      "Potato___Early_blight": 1000,
+      "Potato___Late_blight": 1000,
+      "Tomato___Early_blight": 1000,
+      "Pepper,_bell___Bacterial_spot": 997,
+      "Corn_(maize)___Northern_Leaf_Blight": 985,
+      "Tomato___Leaf_Mold": 952,
+      "Cherry_(including_sour)___healthy": 854,
+      "Apple___Apple_scab": 630,
+      "Apple___Black_rot": 621,
+      "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": 513,
+      "Strawberry___healthy": 456,
+      "Grape___healthy": 423,
+      "Tomato___Tomato_mosaic_virus": 373,
+      "Raspberry___healthy": 371,
+      "Peach___healthy": 360,
+      "Apple___Cedar_apple_rust": 275,
+      "Potato___healthy": 152
+    },
+    "imbalance_ratio_max_over_min": 36.23026315789474,
+    "image_sizes_top": {
+      "256x256": 54305
+    },
+    "duplicates": {
+      "exact_duplicate_pairs": 21,
+      "near_duplicate_pairs": 71,
+      "same_leaf_links": 517,
+      "near_duplicate_rule": "dHash distance <= 4 bits AND 32x32 thumbnail MAE <= 8.0",
+      "duplicate_groups_with_2plus_images": 509,
+      "images_in_label_conflict_groups_excluded": 0
+    },
+    "split_method": "group-level stratified split by class; groups = exact copies (md5), confirmed near-duplicates (dHash <= 4 bits AND thumbnail MAE <= 8) and photos of the same leaf (same class + source id)",
+    "split_seed": 42,
+    "split_fractions": {
+      "train": 0.7,
+      "val": 0.1,
+      "calibration": 0.1,
+      "test": 0.1
+    },
+    "split_sizes": {
+      "train": 38014,
+      "val": 5433,
+      "test": 5432,
+      "calibration": 5426
+    },
+    "reliability_roles": {
+      "rel_train": 3801,
+      "rel_val": 1625
+    }
+  },
+  "plantdoc": {
+    "source": "https://github.com/pratikkayal/PlantDoc-Dataset (TRAIN + TEST folders; never trained on)",
+    "files": 2572,
+    "unreadable": 0,
+    "classes": 28,
+    "class_counts": {
+      "Corn leaf blight": 191,
+      "Tomato Septoria leaf spot": 151,
+      "Squash Powdery mildew leaf": 130,
+      "Raspberry leaf": 119,
+      "Corn rust leaf": 116,
+      "Potato leaf early blight": 116,
+      "Blueberry leaf": 115,
+      "Peach leaf": 111,
+      "Tomato leaf late blight": 111,
+      "Tomato leaf bacterial spot": 110,
+      "Potato leaf late blight": 105,
+      "Strawberry leaf": 96,
+      "Apple Scab Leaf": 93,
+      "Apple leaf": 91,
+      "Tomato mold leaf": 91,
+      "Apple rust leaf": 88,
+      "Tomato Early blight leaf": 88,
+      "Tomato leaf yellow virus": 76,
+      "Bell_pepper leaf spot": 71,
+      "grape leaf": 69,
+      "Corn Gray leaf spot": 68,
+      "Soyabean leaf": 65,
+      "grape leaf black rot": 64,
+      "Tomato leaf": 63,
+      "Bell_pepper leaf": 61,
+      "Cherry leaf": 57,
+      "Tomato leaf mosaic virus": 54,
+      "Tomato two spotted spider mites leaf": 2
+    },
+    "unmapped_classes": [],
+    "mapping_status_counts": {
+      "exact": 2234,
+      "ambiguous": 338
+    },
+    "identical_to_plantvillage_files": 0,
+    "mapping_targets_missing_in_plantvillage": []
+  },
+  "seconds": 77.2381329536438
+}

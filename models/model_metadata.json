@@ -1,0 +1,10 @@
+{
+  "architecture": "torchvision efficientnet_b0, classifier replaced with Linear(1280, num_classes)",
+  "pretrained_init": "ImageNet IMAGENET1K_V1",
+  "num_classes": 38,
+  "best_epoch": 6,
+  "best_val_macro_f1": 0.9946127365370402,
+  "seed": 42,
+  "torch_version": "2.14.1",
+  "trained_on": "PlantVillage train split (reports/manifests/plantvillage_splits.csv)"
+}
