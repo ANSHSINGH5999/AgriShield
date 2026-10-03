@@ -11,6 +11,9 @@ AgriShield has two parts:
 
 A Streamlit website shows the measured results and lets you test your own images.
 
+- **Results website:** https://agrishield.vercel.app (measured results, no installation needed)
+- **Code, trained models and the interactive app:** https://github.com/ANSHSINGH5999/AgriShield
+
 ## Measured results (from `reports/metrics`, full details in `reports/TECHNICAL_REPORT.md`)
 
 **Clean PlantVillage test set** (5,432 held-out images, 38 classes): accuracy **99.80%**,
