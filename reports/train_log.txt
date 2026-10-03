@@ -1,0 +1,8 @@
+device=mps train=38014 val=5433 classes=38
+epoch 1: train loss 0.2949 acc 0.9348 | val loss 0.0782 acc 0.9783 macro-F1 0.9691 (1160s)
+epoch 2: train loss 0.0640 acc 0.9812 | val loss 0.0280 acc 0.9913 macro-F1 0.9896 (1121s)
+epoch 3: train loss 0.0409 acc 0.9881 | val loss 0.0207 acc 0.9943 macro-F1 0.9911 (1390s)
+epoch 4: train loss 0.0243 acc 0.9933 | val loss 0.0155 acc 0.9952 macro-F1 0.9924 (1280s)
+epoch 5: train loss 0.0116 acc 0.9968 | val loss 0.0145 acc 0.9961 macro-F1 0.9945 (2032s)
+epoch 6: train loss 0.0084 acc 0.9977 | val loss 0.0116 acc 0.9967 macro-F1 0.9946 (1359s)
+best epoch 6, val macro-F1 0.9946

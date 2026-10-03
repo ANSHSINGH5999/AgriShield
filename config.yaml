@@ -1,0 +1,54 @@
+# AgriShield configuration. All paths are relative to the AgriShield folder.
+seed: 42
+
+paths:
+  plantvillage_dir: data/PlantVillage-Dataset/raw/color   # 38 class folders of RGB leaf photos
+  plantdoc_dir: data/PlantDoc-Dataset                      # TRAIN/ and TEST/ class folders
+  models_dir: models
+  reports_dir: reports
+
+image:
+  standard_size: 256        # every image is first resized so its shorter side is 256 px
+  input_size: 224           # centre crop fed to EfficientNet-B0
+  mean: [0.485, 0.456, 0.406]   # ImageNet normalisation (matches the pretrained weights)
+  std: [0.229, 0.224, 0.225]
+
+split:                      # fractions of PlantVillage images, assigned by duplicate-group
+  train: 0.70
+  val: 0.10                 # EfficientNet checkpoint selection
+  calibration: 0.10         # reliability-model data (EfficientNet never trained on it)
+  test: 0.10                # locked final test set
+  reliability_val_fraction: 0.30   # part of calibration used to tune the Random Forest + thresholds
+
+training:
+  epochs: 6
+  patience: 2               # early stopping on validation macro-F1
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  num_workers: 4            # set to 0 on Windows if data loading errors appear
+  class_weighting: inverse_sqrt_frequency
+
+perturbations:              # corruption families x severities (1 = mild ... 3 = strong)
+  brightness_low: [0.7, 0.5, 0.3]      # multiply brightness
+  brightness_high: [1.3, 1.6, 2.0]
+  gaussian_blur: [1.0, 2.0, 3.0]       # sigma in pixels (on the 256-px image)
+  gaussian_noise: [0.05, 0.10, 0.20]   # std on a 0-1 pixel scale
+  jpeg_compression: [30, 15, 5]        # JPEG quality
+  low_resolution: [0.5, 0.25, 0.125]   # downscale factor, then resize back
+
+stability_policy:           # fixed, mild perturbations used to measure prediction stability
+  - [brightness_low, 0.85]  # (same policy at training time and in the app)
+  - [brightness_high, 1.15]
+  - [gaussian_blur, 1.0]
+  - [gaussian_noise, 0.03]
+  - [jpeg_compression, 60]
+  - [low_resolution, 0.6]
+
+reliability:
+  threshold_objective: f2   # threshold chosen on reliability-validation data to favour recall
+  rf_search:
+    n_estimators: [400]
+    max_depth: [null, 12]
+    min_samples_leaf: [1, 5, 20]
+    max_features: [sqrt, 0.5]

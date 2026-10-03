@@ -1,0 +1,9 @@
+sample,true_class,source_file,split
+Tomato__Late_blight.jpg,Tomato___Late_blight,Tomato___Late_blight/cbf8d72d-f718-4b68-b609-42b790845c38___GHLB2 Leaf 8887.JPG,test
+Apple__Apple_scab.jpg,Apple___Apple_scab,Apple___Apple_scab/f957b91b-878a-4f53-b8b5-a8bf7fa2c773___FREC_Scab 2970.JPG,test
+Corn_maize__Common_rust_.jpg,Corn_(maize)___Common_rust_,Corn_(maize)___Common_rust_/RS_Rust 2045.JPG,test
+Grape__Black_rot.jpg,Grape___Black_rot,Grape___Black_rot/833133ee-29b2-4336-a371-4fe2ef4d7bbb___FAM_B.Rot 3376.JPG,test
+Potato__Early_blight.jpg,Potato___Early_blight,Potato___Early_blight/d8efc91f-6e85-4508-8d49-9c4a11c4c71a___RS_Early.B 7484.JPG,test
+Tomato__healthy.jpg,Tomato___healthy,Tomato___healthy/7620a603-c3cd-4893-9481-901c9950bb00___GH_HL Leaf 263.1.JPG,test
+Pepper_bell__Bacterial_spot.jpg,"Pepper,_bell___Bacterial_spot","Pepper,_bell___Bacterial_spot/d2a4d03b-3234-4ce5-9fcb-3d6e5fddae51___NREC_B.Spot 1894.JPG",test
+Squash__Powdery_mildew.jpg,Squash___Powdery_mildew,Squash___Powdery_mildew/1ea5b4d2-6174-4c17-b2a6-437a6bb12764___MD_Powd.M 0973.JPG,test
