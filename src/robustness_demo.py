@@ -25,12 +25,12 @@ def run(predictor, raw: Image.Image) -> list[dict]:
     std = standardise(raw, predictor.cfg["image"]["standard_size"])
     conds = demo_conditions(predictor.cfg)
     images = [std] + [perturbations.apply(std, fam, val, seed=0) for _, fam, val in conds]
-    probs = predictor.probs(images)
+    probs = predictor.calibrated(predictor.probs(images))     # calibration never changes the predicted class
     original = int(probs[0].argmax())
     rows = []
-    for (label, fam, val), p in zip([("Original", "clean", 0.0)] + conds, probs):
+    for (label, fam, val), p, image in zip([("Original", "clean", 0.0)] + conds, probs, images):
         pred = int(p.argmax())
-        rows.append({"condition": label, "family": fam, "value": val, "pred_index": pred,
+        rows.append({"condition": label, "family": fam, "value": val, "image": image, "pred_index": pred,
                      "pred_class": predictor.class_names[pred], "confidence": float(p[pred]),
                      "same_as_original": pred == original})
     return rows

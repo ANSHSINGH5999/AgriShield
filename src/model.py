@@ -43,3 +43,10 @@ def load_classifier(models_dir: Path, device: str = "cpu") -> tuple[nn.Module, l
 @torch.no_grad()
 def predict_probs(model: nn.Module, batch: torch.Tensor, device: str) -> np.ndarray:
     return torch.softmax(model(batch.to(device)), dim=1).float().cpu().numpy()
+
+
+@torch.no_grad()
+def features_and_logits(model: nn.Module, batch: torch.Tensor, device: str) -> tuple[np.ndarray, np.ndarray]:
+    """Penultimate 1280-d features and logits from ONE forward pass (same computation as model(x))."""
+    feats = torch.flatten(model.avgpool(model.features(batch.to(device))), 1)
+    return feats.float().cpu().numpy(), model.classifier(feats).float().cpu().numpy()

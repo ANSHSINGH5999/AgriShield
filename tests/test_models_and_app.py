@@ -98,3 +98,24 @@ def test_robustness_demo_uses_existing_config_strengths():
     cfg = load_config()
     for _, fam, val in demo_conditions(cfg):
         assert val == float(cfg["perturbations"][fam][DEMO_SEVERITY - 1])
+
+
+@needs_models
+def test_robustness_demo_returns_each_degraded_image():
+    from src.imaging import load_rgb
+    from src.predictor import Predictor
+    from src.robustness_demo import run
+    sample = sorted((ROOT / "assets" / "samples").glob("*.jpg"))[0]
+    rows = run(Predictor(device="cpu"), load_rgb(sample))
+    assert [r["condition"] for r in rows][0] == "Original" and len(rows) == 6
+    assert all(r["image"].size == rows[0]["image"].size for r in rows)
+
+
+def test_every_class_has_a_plain_english_description():
+    import json
+    from src.disease_info import DISEASE_INFO
+    names = json.loads((ROOT / "models" / "class_names.json").read_text())
+    assert set(names) == set(DISEASE_INFO)
+    for name, (kind, text) in DISEASE_INFO.items():
+        assert kind and len(text) > 20
+        assert (kind == "Healthy") == name.endswith("healthy"), name

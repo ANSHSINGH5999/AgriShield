@@ -106,6 +106,19 @@ The app has **3 pages**. The whole demonstration happens on the first one.
 4. **Final assessment.** "Prediction appears reliable" appears only if the reliability model does not flag the prediction **and**
    all 5 degraded versions agree. Otherwise the page shows "Prediction may be unreliable under changed image conditions".
 
+**Extra checks on the same page**
+- **Image check (out-of-distribution detection).** Before anything else, the image's EfficientNet features are compared with the
+  training leaves (Mahalanobis distance; threshold = 99th percentile of validation scores). Unusual images get a warning and the
+  analysis is hidden unless you tick "Show the analysis anyway". Measured: 99.8% of 2,000 CIFAR-10 (non-leaf) images flagged, 1.0% of
+  PlantVillage test leaves flagged, 95.8% of PlantDoc field photos flagged (they look very different from the training photos).
+- **Grad-CAM heat map** next to the upload: red areas influenced the prediction most.
+- **Calibrated confidence.** The displayed confidence uses temperature scaling (T = 1.144, fitted on validation). It never changes the
+  predicted class, and the Random Forest still receives the original probabilities. Test ECE 0.0014 → 0.0012.
+- **What this means.** A plain-English description of the predicted class (general information, not a diagnosis).
+
+These add-ons are fitted by `python -m scripts.fit_extras` without retraining any model; results are on the
+**Model Performance → Calibration & image check** tab.
+
 There are no sliders, toggles or threshold controls. Sample images from the PlantVillage **test** split are in `assets/samples` and
 can be picked instead of uploading.
 
@@ -113,6 +126,16 @@ can be picked instead of uploading.
 - **Test accuracy** is measured once on held-out labelled test images.
 - **Confidence** is the model's probability for its predicted class on *your* image. It is not accuracy.
 - **Estimated error risk** is the Random Forest's estimated chance that the prediction is wrong. It is a score, not a guarantee.
+
+---
+
+## Online deployment (Streamlit Community Cloud, free)
+
+1. Go to <https://share.streamlit.io> and sign in with GitHub.
+2. **Create app** → repository `ANSHSINGH5999/AgriShield`, branch `main`, main file `app.py`.
+3. **Advanced settings** → Python version **3.12** → **Deploy**.
+
+`requirements.txt` installs the small CPU-only PyTorch build on Linux automatically. The first start takes a few minutes.
 
 ---
 
@@ -128,6 +151,8 @@ AgriShield/
 │   ├── reliability.py          reliability features, fixed feature schema, Random Forest loader
 │   ├── predictor.py            image -> prediction + confidence + stability + estimated error risk (used by the app)
 │   ├── robustness_demo.py      automatic 5-condition robustness test shown in the app (reuses perturbations.py)
+│   ├── calibration.py, ood.py, gradcam.py   temperature scaling, image check, Grad-CAM
+│   ├── disease_info.py         plain-English description of every class
 │   ├── model.py, data.py, datasets.py, engine.py, external_mapping.py, reliability_metrics.py, ui.py, plots.py
 ├── scripts/                    pipeline steps (see "Training")
 ├── models/                     trained files (see below)
@@ -150,6 +175,8 @@ AgriShield/
 | `reliability_schema.json` | feature order, thresholds, hyper-parameters, positive-class definition |
 | `reliability_threshold.json` | validation-selected warning thresholds |
 | `quality_reference.json` | typical ranges of the quality indicators (used for explanations) |
+| `calibration.json` | temperature for calibrated confidence (fitted on validation) |
+| `ood_mahalanobis.npz/.json` | class means, precision matrix and threshold for the image check |
 
 The `.joblib` files use Python pickle. Only load model files that come from this project.
 

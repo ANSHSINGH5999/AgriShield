@@ -18,6 +18,7 @@ import plotly.graph_objects as go  # noqa: E402
 import streamlit as st  # noqa: E402
 
 from src import robustness_demo  # noqa: E402
+from src.disease_info import describe  # noqa: E402
 from src.imaging import ImageError, load_rgb, validate_upload  # noqa: E402
 from src.model import ModelFileError  # noqa: E402
 from src.predictor import Predictor, pretty  # noqa: E402
@@ -99,13 +100,27 @@ if page == "Disease Detection":
         rob = robustness_demo.run(predictor, img)                 # original + 5 representative degradations
 
     step(1, "🖼️ Uploaded image")
-    c_img, _ = st.columns([2, 3])
+    if res.get("ood"):
+        banner("bad", "⚠️ <b>This image does not look like the leaf photos the model was trained on.</b> It may not be a plant "
+                      "leaf, or it is very different (e.g. a field photo with a busy background). Any prediction below may be meaningless.")
+        if not st.checkbox("Show the analysis anyway"):
+            st.stop()
+    c_img, c_cam = st.columns(2)
     c_img.image(img, caption=name, width="stretch")
+    with st.spinner("Computing the Grad-CAM heat map ..."):
+        c_cam.image(predictor.gradcam_overlay(res["standardised"], res["pred_index"]), width="stretch",
+                    caption="Where the model looked (Grad-CAM): red areas influenced the prediction most")
 
     step(2, "🌿 Disease prediction")
     c = st.columns(2)
     with c[0]: big("Predicted disease", pretty(res["pred_class"]), "identified by EfficientNet-B0")
-    with c[1]: big("Confidence", pct(res["confidence"]), "the model's probability for this class (not accuracy)")
+    with c[1]: big("Confidence", pct(res["display_confidence"]),
+                   "calibrated probability for this class (not accuracy)" if predictor.temperature else
+                   "the model's probability for this class (not accuracy)")
+    kind, meaning = describe(res["pred_class"])
+    banner("ok" if kind == "Healthy" else "warn",
+           f"<b>What this means</b> ({html.escape(kind)}): {html.escape(meaning)}")
+    st.caption("General information about this class, not a diagnosis. Confirm with an agricultural expert.")
 
     step(3, "🛡️ Reliability assessment")
     if "risk" not in res:
@@ -126,8 +141,27 @@ if page == "Disease Detection":
     rows = f"<tr><td>{html.escape(rob[0]['condition'])}</td><td>{html.escape(pretty(rob[0]['pred_class']))}</td><td>Reference</td></tr>"
     rows += "".join(f"<tr><td>{html.escape(r['condition'])}</td><td>{html.escape(pretty(r['pred_class']))}</td>"
                     f"<td>{'✓' if r['same_as_original'] else '✗'}</td></tr>" for r in degraded)
+    cols = st.columns(len(rob))
+    for col, r in zip(cols, rob):
+        mark = "Reference" if r is rob[0] else ("✓ same" if r["same_as_original"] else "✗ changed")
+        col.image(r["image"], width="stretch")
+        col.markdown(f"**{r['condition']}**  \n{pretty(r['pred_class'])}  \n{mark}")
     st.markdown(f'<table class="robust"><thead><tr><th>Condition</th><th>Prediction</th><th>Agreement</th></tr></thead>'
                 f'<tbody>{rows}</tbody></table>', unsafe_allow_html=True)
+    st.markdown("**Compare each condition with the original**")
+    for tab, r in zip(st.tabs([r["condition"] for r in degraded]), degraded):
+        with tab:
+            left, right = st.columns(2)
+            for col, item, title in ((left, rob[0], "Original"), (right, r, r["condition"])):
+                col.image(item["image"], width="stretch")
+                col.markdown(f"**{title}**  \nPrediction: {pretty(item['pred_class'])}  \nConfidence: {pct(item['confidence'])}")
+                kind, meaning = describe(item["pred_class"])
+                col.caption(f"{kind}: {meaning}")
+            if r["same_as_original"]:
+                banner("ok", f"✓ <b>Same prediction</b> as the original under {html.escape(r['condition'].lower())}.")
+            else:
+                banner("warn", f"✗ <b>Prediction changed</b> under {html.escape(r['condition'].lower())}: "
+                               f"{html.escape(pretty(rob[0]['pred_class']))} → {html.escape(pretty(r['pred_class']))}.")
     st.markdown(f"**Prediction agreement: {agree}/{len(degraded)} degraded conditions**")
     if agree < len(degraded):
         st.caption("The prediction changed under image degradation, indicating reduced prediction stability. "
@@ -155,7 +189,9 @@ elif page == "Model Performance":
         need_setup("Evaluation results")
         st.stop()
     ext = read_json("external_plantdoc_metrics.json")
-    t1, t2, t3, t4 = st.tabs(["Classifier", "Robustness", "Reliability model", "External PlantDoc evaluation"])
+    cal_m, ood_m = read_json("calibration_metrics.json"), read_json("ood_metrics.json")
+    t1, t2, t3, t4, t5 = st.tabs(["Classifier", "Robustness", "Reliability model", "External PlantDoc evaluation",
+                                  "Calibration & image check"])
 
     with t1:
         st.markdown(f"**Model:** EfficientNet-B0 · **Dataset:** PlantVillage · **Evaluation:** locked held-out test set · "
@@ -255,6 +291,29 @@ elif page == "Model Performance":
             st.plotly_chart(px.bar(pc_, x="accuracy", y="plantdoc_class", orientation="h", height=620, hover_data=["images"],
                                    title="PlantDoc accuracy per class (exact label matches)").update_layout(xaxis_tickformat=".0%"),
                             width="stretch")
+
+    with t5:
+        if not cal_m or not ood_m:
+            need_setup("Calibration and image-check results")
+        else:
+            st.markdown("**Confidence calibration (temperature scaling).** A single temperature, fitted on the validation set, rescales the "
+                        "classifier's probabilities so the displayed confidence matches how often it is right. It never changes the "
+                        "predicted class, and the reliability model still uses the original probabilities.")
+            c = st.columns(3)
+            with c[0]: card("Temperature T", f"{cal_m['temperature']:.3f}", "fitted on validation logits")
+            with c[1]: card("Calibration error (ECE)", f"{cal_m['test_ece_after']:.4f}", f"before: {cal_m['test_ece_before']:.4f} (test set)")
+            with c[2]: card("Mean confidence", pct(cal_m["test_mean_confidence_after"]),
+                            f"before {pct(cal_m['test_mean_confidence_before'])}; accuracy {pct(cal_m['test_accuracy'])}")
+            st.markdown("**Image check (out-of-distribution detection).** Measures how far the image's internal features are from the "
+                        "training leaves (Mahalanobis distance). Images beyond the threshold, set so about 1% of genuine validation "
+                        "leaves are flagged, get a warning before any prediction is shown.")
+            c = st.columns(4)
+            with c[0]: card("Non-leaf images flagged", pct(ood_m["cifar10_rejected"]), f"{ood_m['cifar10_images']:,} CIFAR-10 images")
+            with c[1]: card("PlantVillage leaves flagged", pct(ood_m["plantvillage_test_rejected"]), "test set (false alarms)")
+            with c[2]: card("Field photos flagged", pct(ood_m["plantdoc_field_photos_rejected"]), f"{ood_m['plantdoc_images']:,} PlantDoc images")
+            with c[3]: card("AUROC", f"{ood_m['auroc_plantvillage_vs_cifar10']:.3f}", "leaves vs non-leaves")
+            if (FIGURES / "calibration_and_ood.png").exists():
+                st.image(str(FIGURES / "calibration_and_ood.png"), width="stretch")
 
 # ---------------------------------------------------------------- About
 else:

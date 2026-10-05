@@ -1,0 +1,6 @@
+{
+  "threshold": 3282.8423862216778,
+  "method": "class-conditional Mahalanobis distance on EfficientNet penultimate features",
+  "fitted_on": "training split features",
+  "threshold_rule": "99th percentile of validation scores"
+}
