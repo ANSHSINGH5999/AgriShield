@@ -9,5 +9,8 @@ pyyaml==6.0.3
 scikit-learn==1.9.1
 streamlit==1.65.0
 tabulate==0.10.0
-torch==2.14.1
-torchvision==0.29.1
+# PyTorch: normal wheels on Windows/macOS; small CPU-only wheels on Linux x86-64 (Streamlit Community Cloud, Python 3.12)
+torch==2.14.1 ; sys_platform != "linux"
+torchvision==0.29.1 ; sys_platform != "linux"
+torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl ; sys_platform == "linux" and platform_machine == "x86_64"
+torchvision @ https://download.pytorch.org/whl/cpu/torchvision-0.29.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl ; sys_platform == "linux" and platform_machine == "x86_64"

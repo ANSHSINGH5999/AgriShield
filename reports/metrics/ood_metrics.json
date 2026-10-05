@@ -1,0 +1,11 @@
+{
+  "threshold": 3282.8423862216778,
+  "threshold_rule": "99th percentile of validation scores",
+  "plantvillage_test_rejected": 0.009941089837997054,
+  "cifar10_rejected": 0.9975,
+  "cifar10_images": 2000,
+  "auroc_plantvillage_vs_cifar10": 0.9997745765832107,
+  "plantdoc_field_photos_rejected": 0.9583981337480559,
+  "plantdoc_images": 2572,
+  "note": "CIFAR-10 (vehicles, animals) stands in for clearly non-leaf uploads; PlantDoc are real leaves in field photos."
+}
