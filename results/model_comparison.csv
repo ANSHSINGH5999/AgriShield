@@ -1,0 +1,10 @@
+Parameter,EfficientNet-B0,Random Forest
+Model type,"Convolutional neural network (torchvision EfficientNet-B0, fine-tuned)",Ensemble of decision trees (scikit-learn Random Forest)
+Purpose,Classify the plant disease (38 classes),Predict whether EfficientNet's prediction is wrong
+Input,Leaf image (RGB),"17 numbers: confidence/entropy, image quality, prediction-stability features"
+Output,Disease class + confidence,Risk score P(prediction incorrect) -> reliable / flag for review
+Role,Primary predictor,Safety layer on top of the predictor
+Main metric,"Accuracy, macro-F1 (clean test set)","PR-AUC, recall of incorrect predictions, Brier score"
+Actual result,"Acc 99.80%, P 0.997, R 0.996, F1 0.996; PlantDoc external acc 18.0%","PR-AUC 0.947 (confidence baseline 0.848), recall 97.4%, precision 66.7%, Brier 0.035"
+Strength,Near-perfect on clean lab images,"Catches most wrong predictions, incl. under degradation; beats confidence alone"
+Limitation,Accuracy collapses under severe blur/noise/JPEG/low-res; poor on field photos (18%),Trained on PlantVillage-style errors; flags ~26% of predictions (false alarms)

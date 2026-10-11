@@ -1,0 +1,37 @@
+group,metric,value
+EfficientNet-B0,test_images,5432.0
+EfficientNet-B0,accuracy,0.9979749631811488
+EfficientNet-B0,macro_precision,0.996594773004831
+EfficientNet-B0,macro_recall,0.9956691156598078
+EfficientNet-B0,macro_f1,0.9960923282716311
+Random Forest,rows,21728.0
+Random Forest,incorrect_rate,0.17903166421207659
+Random Forest,pr_auc,0.9468059434715542
+Random Forest,roc_auc,0.9859991710599624
+Random Forest,recall,0.9740359897172236
+Random Forest,precision,0.6668426610348469
+Random Forest,brier,0.03472458434968704
+Random Forest,confidence_baseline_pr_auc,0.8482510392027722
+Random Forest,confidence_baseline_recall,0.9573264781491002
+PlantDoc external,images,2234.0
+PlantDoc external,accuracy,0.18039391226499552
+PlantDoc external,macro_f1,0.17626571641987052
+Robustness,brightness_high sev1 accuracy,0.9959499263622976
+Robustness,brightness_high sev2 accuracy,0.980301914580265
+Robustness,brightness_high sev3 accuracy,0.9162371134020618
+Robustness,brightness_low sev1 accuracy,0.9966863033873344
+Robustness,brightness_low sev2 accuracy,0.9893225331369662
+Robustness,brightness_low sev3 accuracy,0.9432989690721648
+Robustness,clean sev0 accuracy,0.9979749631811488
+Robustness,gaussian_blur sev1 accuracy,0.9858247422680412
+Robustness,gaussian_blur sev2 accuracy,0.8427835051546392
+Robustness,gaussian_blur sev3 accuracy,0.5254050073637703
+Robustness,gaussian_noise sev1 accuracy,0.8280559646539027
+Robustness,gaussian_noise sev2 accuracy,0.2052650957290132
+Robustness,gaussian_noise sev3 accuracy,0.0215390279823269
+Robustness,jpeg_compression sev1 accuracy,0.9952135493372608
+Robustness,jpeg_compression sev2 accuracy,0.9611561119293078
+Robustness,jpeg_compression sev3 accuracy,0.4136597938144329
+Robustness,low_resolution sev1 accuracy,0.9653902798232696
+Robustness,low_resolution sev2 accuracy,0.7634388807069219
+Robustness,low_resolution sev3 accuracy,0.2951030927835051
