@@ -1,11 +1,13 @@
 """One command to produce every evaluation graph + metric file from the saved models/results (no retraining).
 
-    python generate_results.py
+    python generate_results.py              (saves the graphs AND opens them in matplotlib windows)
+    python generate_results.py --no-show    (only save; no windows)
 
 Reads:  models/ (RF reliability models + schema), reports/metrics/*, reports/features/test_rows.csv.gz
 Writes: results/graphs/*.png, results/metrics.json, results/metrics.csv, results/model_comparison.{csv,png}
 """
 import json
+import sys
 import textwrap
 
 import joblib
@@ -16,6 +18,10 @@ from sklearn.metrics import precision_recall_curve
 from src.config import load_config, project_path
 from src.plots import GREEN, PALETTE, plt
 from src.reliability_metrics import binary_report, calibration_table
+
+SHOW = "--no-show" not in sys.argv
+if SHOW:
+    plt.switch_backend("macosx" if sys.platform == "darwin" else "TkAgg")   # src.plots forces the file-only backend
 
 RES = project_path("results")
 GR = RES / "graphs"
@@ -29,7 +35,8 @@ generated, skipped = [], []
 
 def save(fig, name):
     fig.savefig(GR / name)
-    plt.close(fig)
+    if not SHOW:
+        plt.close(fig)
     generated.append(name)
 
 
@@ -42,6 +49,7 @@ def main():
     cfg = load_config()
     clf = json.loads((MET / "classifier_test_metrics.json").read_text())
     ext = json.loads((MET / "external_plantdoc_metrics.json").read_text())
+    rel = json.loads((MET / "reliability_test_metrics.json").read_text())
     rob = pd.read_csv(MET / "robustness_by_corruption.csv")
     cm = pd.read_csv(MET / "test_confusion_matrix.csv", index_col=0)
     models_dir = project_path(cfg["paths"]["models_dir"])
@@ -214,10 +222,25 @@ def main():
     print(f"Recall           : {rf_rep['recall'] * 100:.1f}%   (precision {rf_rep['precision'] * 100:.1f}%)")
     print(f"Brier score      : {brier:.3f}")
     print(f"\nPlantDoc external accuracy: {ext_s['accuracy'] * 100:.1f}% ({ext_s['images']:,} images)")
+    print(f"\n{sub}\nALL 18 DEGRADATION CONDITIONS (accuracy %)\n{sub}")
+    print(f"{'condition':22s}{'mild':>9s}{'medium':>9s}{'strong':>9s}")
+    for fam, d in deg.groupby("family"):
+        d = d.sort_values("severity")
+        print(f"{FAMILY_LABEL.get(fam, fam):22s}" + "".join(f"{a * 100:9.2f}" for a in d["accuracy"]))
+    print(f"\n{sub}\nRELIABILITY METHODS COMPARED ({len(y):,} test rows)\n{sub}")
+    print(f"{'method':26s}{'prec%':>8s}{'recall%':>9s}{'F1%':>7s}{'ROC-AUC':>9s}{'PR-AUC':>8s}")
+    for nm, k in (("Confidence baseline", "Confidence threshold"), ("Margin baseline", "Margin threshold"), ("Random Forest A (11)", "Random Forest (A)"), ("Random Forest B (17)", "Random Forest (B)")):
+        r = rel["methods"][k]["all conditions"]
+        print(f"{nm:26s}{r['precision'] * 100:8.2f}{r['recall'] * 100:9.2f}{r['f1'] * 100:7.2f}{r['roc_auc']:9.4f}{r['pr_auc']:8.4f}")
+    print(f"\n{sub}\nPLANTDOC EXTERNAL TEST ({ext_s['images']:,} images, {ext_s['classes']} classes)\n{sub}")
+    print(f"accuracy {ext_s['accuracy'] * 100:.2f}% | top-3 {ext_s['top3_accuracy'] * 100:.2f}% | macro-F1 {ext_s['macro_f1_over_present_classes']:.4f}")
     print(f"\n{sub}\nGRAPHS GENERATED  ->  {GR}\n{sub}")
     for i, n in enumerate(generated, 1):
         print(f"{i}. {n}")
     print(f"\nAlso: results/metrics.json, metrics.csv, model_comparison.csv\n{bar}")
+    if SHOW:
+        print("Opening the graphs in matplotlib windows (close them to finish)...")
+        plt.show()
 
 
 if __name__ == "__main__":
